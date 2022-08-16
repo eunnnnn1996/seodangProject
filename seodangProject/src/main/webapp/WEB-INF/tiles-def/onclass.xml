@@ -41,17 +41,17 @@
     <!-- ///////////////////// -->
     
      <definition name="onclassReview" template="/WEB-INF/views/template/layout_noheader.jsp">
-    	<put-attribute name="title" value="오프라인 클래스 후기 작성"/>
+    	<put-attribute name="title" value="온라인 클래스 후기 작성"/>
     	<put-attribute name="body" value="/WEB-INF/views/onclass/onclassReview.jsp"/>
     	<put-attribute name="footer" value="/WEB-INF/views/template/footer_noheader.jsp"/>
     </definition>
     <definition name="onclassReviewList" template="/WEB-INF/views/template/layout_noheader.jsp">
-    	<put-attribute name="title" value="오프라인 클래스 후기 작성"/>
+    	<put-attribute name="title" value="온라인 클래스 후기 작성"/>
     	<put-attribute name="body" value="/WEB-INF/views/onclass/onclassReviewList.jsp"/>
     	<put-attribute name="footer" value="/WEB-INF/views/template/footer_noheader.jsp"/>
     </definition>
     <definition name="onclassReviewUpdate" template="/WEB-INF/views/template/layout_noheader.jsp">
-    	<put-attribute name="title" value="오프라인 클래스 후기 수정"/>
+    	<put-attribute name="title" value="온라인 클래스 후기 수정"/>
     	<put-attribute name="body" value="/WEB-INF/views/onclass/onclassReviewUpdate.jsp"/>
     	<put-attribute name="footer" value="/WEB-INF/views/template/footer_noheader.jsp"/>
     </definition>

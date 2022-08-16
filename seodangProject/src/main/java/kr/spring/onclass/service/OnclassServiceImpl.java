@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import kr.spring.offclass.vo.OffstarReplyVO;
 import kr.spring.onclass.dao.OnclassMapper;
 import kr.spring.onclass.vo.OnclassVO;
 import kr.spring.onclass.vo.OnlikeVO;
@@ -204,6 +205,36 @@ public class OnclassServiceImpl implements OnclassService{
 	public void updateOnReview(OnstarVO onstarVO) {
 		// TODO Auto-generated method stub
 		onclassMapper.updateOnReview(onstarVO);
+	}
+
+	@Override
+	public void inserOnReviewReply(OnstarReplyVO onstarReplyVO) {
+		// TODO Auto-generated method stub
+		onclassMapper.inserOnReviewReply(onstarReplyVO);
+	}
+
+	@Override
+	public OnstarReplyVO selectOnReviewReply(int onstar_num) {
+		// TODO Auto-generated method stub
+		return onclassMapper.selectOnReviewReply(onstar_num);
+	}
+
+	@Override
+	public void deleteOnReviewReplyByOnstar(OnstarReplyVO onstarReplyVO) {
+		// TODO Auto-generated method stub
+		onclassMapper.updateOnReviewReply(onstarReplyVO);
+	}
+
+	@Override
+	public void deleteOnReviewReply(int onre_num) {
+		// TODO Auto-generated method stub
+		onclassMapper.deleteOnReviewReply(onre_num);
+	}
+
+	@Override
+	public void deleteOnReview(int onstar_num) {
+		// TODO Auto-generated method stub
+		onclassMapper.deleteOnReview(onstar_num);
 	}
 
 

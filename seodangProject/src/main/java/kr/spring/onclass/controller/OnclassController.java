@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.spring.myclass.service.MyclassService;
+import kr.spring.offclass.vo.OffclassVO;
+import kr.spring.offclass.vo.OffstarVO;
 import kr.spring.onclass.service.OnclassService;
 import kr.spring.onclass.vo.OnclassVO;
 import kr.spring.onclass.vo.OnstarVO;
@@ -113,12 +115,10 @@ public class OnclassController {
 		onclassVO.setUser_num(user_num);
 		
 		int on_num = onclassService.currSelect();
-		System.out.println("온넘 찍기 : "+on_num);
 		
 		String uploadFolder = "/resources/image_upload";
 		String realFolder = session.getServletContext().getRealPath(uploadFolder);
 		
-		System.out.println(realFolder);
 		
         File dir = new File(realFolder);
         if (!dir.isDirectory()) {
@@ -158,8 +158,6 @@ public class OnclassController {
 		if(result.hasErrors()) {
 			return insertForm();
 		}
-		
-		System.out.println(mimage);
 		
 		onclassVO.setOn_num(on_num);
 		onclassVO.setMimage(mimage);
@@ -279,7 +277,7 @@ public class OnclassController {
 	@GetMapping("/onclass/onclassDetail.do")
 	public ModelAndView detailForm(HttpSession session,int on_num) {
 		onclassService.updateHit(on_num); //조회수
-		
+		Map<String, Object> map = new HashMap<String, Object>();
 		//다중업로드 파일 가져오기 시작
 		List<UploadFileVO> uplist = onclassService.selectFile(on_num);
 		//다중업로드 파일 가져오기 끝
@@ -287,19 +285,183 @@ public class OnclassController {
 		OnclassVO oVO = onclassService.selectOnclass(on_num);
 	
 		ModelAndView mav = new ModelAndView();
-
+		map.put("on_num",on_num);
+		//리뷰 개수
+		int review_count = onclassService.selectRowReviewCount(map);
+		//별점 점수
+		float rating = 0;
+		if(review_count>0) {
+			rating= onclassService.selectReviewRating(on_num);
+		}
+		
+		//후기 목록 받아오기
+		Map<String, Object> map2 = new HashMap<String, Object>();
+		map2.put("on_num", on_num);
+		map2.put("rownum",6);
+		List<OnstarVO> list2 = onclassService.selectListOnReview(map2);
+		//별점 점수 세팅하기
+		for(int i=0;i<list2.size();i++) {
+			OnstarVO onstarVO = list2.get(i);
+			onstarVO.setRating_percent(onstarVO.getRating()*20);
+		}
+		
 		//프로필 뿌림
 		mav.setViewName("onclassDetail");
 		mav.addObject("onclass",oVO);		
 		mav.addObject("peopleCount", myclassService.peopleCount(on_num));
+		mav.addObject("rating",rating);
+		mav.addObject("review_count",review_count);
+		mav.addObject("list2",list2);
 		//다중 업로드
 		mav.addObject("uplist",uplist);
 		for(int i=0; i<4;i++) {
 			mav.addObject("upfile"+i,uplist.get(i));
 		}
-
+			
 		return mav;
 	}
+	
+		//온라인 클래스 후기 작성 폼 
+		@GetMapping("/onclass/onclassReview.do")
+		public String reviewForm(OnstarVO onstarVO,int on_num,HttpSession session,Model model) {
+			
+			OnclassVO onclassVO = onclassService.selectOnclass(on_num);
+			onstarVO.setOn_name(onclassVO.getOn_name());
+			
+			Integer user_num = (Integer)session.getAttribute("session_user_num");
+
+			//작성했는지 확인을 하기 위해
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("on_num",on_num);
+			map.put("user_num",user_num);
+			//작성했는지 확인하기 위해
+			OnstarVO onstarVO2 = onclassService.selectOnReview(map);
+			if(onstarVO2!=null) {
+				model.addAttribute("onstarVO",onstarVO2);
+				return "redirect:/onclass/onclassReviewUpdate.do?on_num="+on_num;
+			}
+			
+			return "onclassReview";
+		}
+		
+		//온라인 클래스 후기 작성
+		@PostMapping("/onclass/onclassReview.do")
+		public String reviewSubmit(@Valid OnstarVO onstarVO,BindingResult result,HttpSession session) {
+			int on_num = onstarVO.getOn_num();
+			
+			if(result.hasErrors()) {
+				return "onclassReview";
+			}
+			Integer user_num = (Integer)session.getAttribute("session_user_num");
+			//회원번호 세팅
+			onstarVO.setUser_num(user_num);
+			onclassService.insertOnReview(onstarVO);
+			
+			return "redirect:/onclass/onclassDetail.do?on_num="+on_num;
+		}
+		
+		//온라인 클래스 후기 목록
+		@RequestMapping("/onclass/onclassReviewList.do")
+		public ModelAndView processReview(@RequestParam int on_num,HttpSession session,@RequestParam(value="sort",defaultValue="0") int sort) {
+			
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("on_num",on_num);
+			map.put("sort",sort);
+			int count = onclassService.selectRowReviewCount(map);
+			OnclassVO onclassVO=onclassService.selectOnclass(on_num);
+			int writer_num = onclassVO.getUser_num();
+			String photo_name= onclassVO.getPhoto_name();
+			String writer_name= onclassVO.getName();//작성자 이름
+			Integer session_user_num = (Integer)session.getAttribute("session_user_num");
+			
+			List<OnstarVO> list = null;
+			float rating = 0;
+			int star_1 = 0;
+			int star_2 = 0;
+			int star_3 = 0;
+			int star_4 = 0;
+			int star_5 = 0;
+			ModelAndView mav = new ModelAndView();
+			if(count>0) {
+				rating= onclassService.selectReviewRating(on_num);
+				list = onclassService.selectListOnReview(map);
+				map.put("rating",1);
+				star_1 = onclassService.selectRowReviewCount(map);
+				Map<String, Object> map_2 = new HashMap<String, Object>();
+				map_2.put("on_num",on_num);
+				map_2.put("rating",2);
+				star_2 = onclassService.selectRowReviewCount(map_2);
+				Map<String, Object> map_3 = new HashMap<String, Object>();
+				map_3.put("on_num",on_num);
+				map_3.put("rating",3);
+				star_3 = onclassService.selectRowReviewCount(map_3);
+				Map<String, Object> map_4 = new HashMap<String, Object>();
+				map_4.put("on_num",on_num);
+				map_4.put("rating",4);
+				star_4 = onclassService.selectRowReviewCount(map_4);
+				Map<String, Object> map_5 = new HashMap<String, Object>();
+				map_5.put("on_num",on_num);
+				map_5.put("rating",5);
+				star_5 = onclassService.selectRowReviewCount(map_5);
+				for(int i=0;i<list.size();i++) {
+					OnstarVO onstarVO = list.get(i);
+					onstarVO.setRating_percent(onstarVO.getRating()*20);
+				}
+			}
+			
+			
+			mav.setViewName("onclassReviewList");
+			mav.addObject("list", list);
+			mav.addObject("count", count);
+			mav.addObject("star_1", star_1);
+			mav.addObject("star_2", star_2);
+			mav.addObject("star_3", star_3);
+			mav.addObject("star_4", star_4);
+			mav.addObject("star_5", star_5);
+			mav.addObject("rating", rating);
+			//글 작성자 -강사
+			mav.addObject("writer_num",writer_num);
+			mav.addObject("photo_name",photo_name);
+			mav.addObject("writer_name",writer_name);
+			if(session_user_num!=null) {
+				mav.addObject("session_user_num",session_user_num);
+			}
+			mav.addObject("on_num",on_num);
+			
+			return mav;
+		}
+		//온라인 클래스 후기 수정폼
+		@GetMapping("/onclass/onclassReviewUpdate.do")
+		public String reviewformUpdate(@RequestParam int on_num,HttpSession session,Model model) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			
+			map.put("on_num", on_num);
+			Integer user_num = (Integer)session.getAttribute("session_user_num");
+			map.put("user_num", user_num);
+			OnstarVO onstarVO = onclassService.selectOnReview(map);
+			
+			OnclassVO onclassVO = onclassService.selectOnclass(on_num);
+			onstarVO.setOn_name(onclassVO.getOn_name());
+			
+			model.addAttribute("onstarVO",onstarVO);
+			
+			return "onclassReviewUpdate";
+		}
+		//온라인 클래스 후기 수정
+		@PostMapping("/onclass/onclassReviewUpdate.do")
+		public String reviewsubmitUpdate(@Valid OnstarVO onstarVO, BindingResult result,Model model) {
+
+			int on_num = onstarVO.getOn_num();
+			if(result.hasErrors()) {
+				return "onclassReviewUpdate";
+			}
+			
+			onclassService.updateOnReview(onstarVO);
+			
+			model.addAttribute("onstarVO",onstarVO);
+			
+			return "redirect:/onclass/onclassReviewList.do?on_num="+on_num;
+		}
 }
 
 

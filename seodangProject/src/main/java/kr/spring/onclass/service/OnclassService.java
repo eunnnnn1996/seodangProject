@@ -27,6 +27,7 @@ public interface OnclassService {
 	public void updateOnclass(OnclassVO onclassVO);
 	public void deleteOnclass(Integer on_num);
 	public OnclassVO selectOnclass(Integer on_num);
+	public void deleteOnReview(int onstar_num);
 	public void updateHit(Integer on_num);
 	//프로필 정보 출력
 	public UserVO getProfile(int user_num);
@@ -53,5 +54,11 @@ public interface OnclassService {
 	public List<OnstarVO> selectListOnReview(Map<String, Object> map);
 	public void updateOnReviewReply(OnstarReplyVO onstarReplyVO);
 	public void updateOnReview(OnstarVO onstarVO);
+	
+	//후기 작성 댓글
+	public void inserOnReviewReply(OnstarReplyVO onstarReplyVO);
+	public OnstarReplyVO selectOnReviewReply(int onstar_num);
+	public void deleteOnReviewReplyByOnstar(OnstarReplyVO onstarReplyVO);
+	public void deleteOnReviewReply(int onre_num);
 
 }

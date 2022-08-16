@@ -10,14 +10,11 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import kr.spring.offclass.vo.OffstarReplyVO;
-import kr.spring.offclass.vo.OffstarVO;
 import kr.spring.onclass.vo.OnclassVO;
 import kr.spring.onclass.vo.OnlikeVO;
 import kr.spring.onclass.vo.OnstarReplyVO;
 import kr.spring.onclass.vo.OnstarVO;
 import kr.spring.onclass.vo.UploadFileVO;
-import kr.spring.qna.vo.OqnaReplyVO;
 import kr.spring.user.vo.UserVO;
 
 public interface OnclassMapper {
@@ -97,5 +94,17 @@ public interface OnclassMapper {
 	public void updateOnReviewReply(OnstarReplyVO onstarReplyVO);
 	@Update("UPDATE onstar SET rating=#{rating},text=#{text} WHERE onstar_num=#{onstar_num}")
 	public void updateOnReview(OnstarVO onstarVO);
+	@Delete("DELETE FROM onstar WHERE onstar_num=#{onstar_num}")
+	public void deleteOnReview(int onstar_num);
+	//후기 작성 댓글
+	@Insert("INSERT INTO onstar_reply (onre_num,onstar_num,user_num,onre_content) VALUES (onstar_reply_seq.nextval,#{onstar_num},#{user_num},#{onre_content})")
+	public void inserOnReviewReply(OnstarReplyVO onstarReplyVO);
+	//후기 작성 답변 select
+	@Select("SELECT * FROM onstar_reply r JOIN ouser_detail d ON r.user_num = d.user_num WHERE onstar_num=#{onstar_num}")
+	public OnstarReplyVO selectOnReviewReply(int onstar_num);
+	@Delete("DELETE FROM onstar_reply WHERE onstar_num=#{onstar_num}")
+	public void deleteOnReviewReplyByOnstar(OnstarReplyVO onstarReplyVO);
+	@Delete("DELETE FROM onstar_reply WHERE onre_num=#{onre_num}")
+	public void deleteOnReviewReply(int onre_num);
 
 }

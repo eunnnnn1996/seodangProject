@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.spring.offclass.vo.OffstarReplyVO;
 import kr.spring.onclass.service.OnclassService;
 import kr.spring.onclass.vo.OnlikeVO;
+import kr.spring.onclass.vo.OnstarReplyVO;
 import kr.spring.user.controller.UserController;
 import kr.spring.util.PagingUtil;
 
@@ -86,4 +88,88 @@ public class OnclassAjaxController {
 		}
 		return map;
 	}
+	
+	/* 후기댓글 */
+	
+	@RequestMapping("/onclass/writeOnReply.do")
+	@ResponseBody
+	public Map<String, String> writeReply(OnstarReplyVO onstarReplyVO,HttpSession session){
+		Map<String, String> map =new HashMap<String, String>();
+		Integer user_num = (Integer)session.getAttribute("session_user_num");
+		if(user_num==null) {
+			map.put("result", "logout");
+		}else {
+			onstarReplyVO.setUser_num(user_num);
+			onclassService.inserOnReviewReply(onstarReplyVO);
+			map.put("result", "success");
+		}
+		
+		return map;
+	}
+	
+	@RequestMapping("/onclass/selectOnReply.do")
+	@ResponseBody
+	public Map<String, Object> selectReply(int onstar_num,HttpSession session){
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer user_num = (Integer)session.getAttribute("session_user_num");
+		
+		OnstarReplyVO onstarReplyVO = onclassService.selectOnReviewReply(onstar_num);
+	
+			map.put("user_num", user_num);
+			map.put("onre_date", onstarReplyVO.getOnre_date());
+			map.put("onre_content", onstarReplyVO.getOnre_content());
+			map.put("photo_name",onstarReplyVO.getPhoto_name());
+			map.put("writer_name", onstarReplyVO.getName());
+			map.put("result", "success");
+		return map;
+	}
+	
+	//후기 삭제 - 후기 답변 삭제X
+	@RequestMapping("/onclass/deleteOnReview.do")
+	@ResponseBody
+	public Map<String, Object> deleteReview(int num,HttpSession session){
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer user_num = (Integer)session.getAttribute("session_user_num");
+		if(user_num==null) {
+			map.put("result", "logout");
+		}else {
+			map.put("result","success");
+			onclassService.deleteOnReview(num);
+		}
+		
+		return map;
+	}
+	@RequestMapping("/onclass/updateOnReply.do")
+	@ResponseBody
+	public Map<String, Object> updateReply(OnstarReplyVO onstarReplyVO,HttpSession session){
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer user_num = (Integer)session.getAttribute("session_user_num");
+		if(user_num==null) {
+			map.put("result", "logout");
+		}else {
+			map.put("result","success");
+			onclassService.updateOnReviewReply(onstarReplyVO);
+		}
+		
+		return map;
+	}
+	//후기 삭제 - 후기 답변 삭제X
+	@RequestMapping("/onclass/deleteOnReply.do")
+	@ResponseBody
+	public Map<String, Object> deleteReply(int onre_num,HttpSession session){
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		Integer user_num = (Integer)session.getAttribute("session_user_num");
+		if(user_num==null) {
+			map.put("result", "logout");
+		}else {
+			map.put("result","success");
+			onclassService.deleteOnReviewReply(onre_num);
+		}
+		
+		return map;
+	}
+	
 }

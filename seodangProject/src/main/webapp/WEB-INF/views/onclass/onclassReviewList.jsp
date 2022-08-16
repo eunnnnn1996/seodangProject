@@ -4,10 +4,10 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/offclass.css">
 <!-- 중앙 컨텐츠 시작 -->
 <script src="${pageContext.request.contextPath}/resources/js/jquery-3.6.0.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/offreview.reply.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/onreview.reply.js"></script>
 <div class="back-title">
 	<span class="backspace" >
-	<img id="back_img" src="${pageContext.request.contextPath}/resources/images/back_arrow.png" data-off_num="${off_num }">
+	<img id="back_img" src="${pageContext.request.contextPath}/resources/images/back_arrow.png" data-on_num="${on_num }">
 	</span>
 	<div class="title">
 		<h3>최근 리뷰</h3>
@@ -90,11 +90,11 @@
 	<div class="sorting-item align-right">
 	<div class="display-flex">
 	<div class="page-sort review-sort">
-		<a class="menu" href="${pageContext.request.contextPath}/offclass/offclassReviewList.do?off_num=${off_num }">최신순</a>
+		<a class="menu" href="${pageContext.request.contextPath}/onclass/onclassReviewList.do?on_num=${on_num }">최신순</a>
 		<span class="spacing">|</span>
-		<a class="menu" href="${pageContext.request.contextPath}/offclass/offclassReviewList.do?off_num=${off_num }&&sort=1">별점높은순</a>
+		<a class="menu" href="${pageContext.request.contextPath}/onclass/onclassReviewList.do?on_num=${on_num }&&sort=1">별점높은순</a>
 		<span class="spacing">|</span>
-		<a class="menu" href="${pageContext.request.contextPath}/offclass/offclassReviewList.do?off_num=${off_num }&&sort=2">별점낮은순 </a>
+		<a class="menu" href="${pageContext.request.contextPath}/onclass/onclassReviewList.do?on_num=${on_num }&&sort=2">별점낮은순 </a>
 	</div>
 	</div></div>
 	<div id="reviewList" data-name="${writer_name }" data-user="${writer_num }" data-photo="${photo_name }">
@@ -159,7 +159,7 @@
 				</c:if>
 			</div>
 			</c:if>
-			<div id=${item.onstar_num } data-offre_num=${item.onre_num }>
+			<div id=${item.onstar_num } data-onre_num=${item.onre_num }>
 			<c:if test="${!empty item.writer_num}">
 			<div class="reply-complete display-flex">
 				<div class="user_image">
@@ -176,7 +176,7 @@
 							<b>${item.writer_name } 강사님&nbsp;</b>
 						</div>
 						<div class="re-date">
-							${item.offre_date }
+							${item.onre_date }
 						</div>
 						<c:if test="${writer_num==session_user_num }">
 						<div class="re-btn">
@@ -187,8 +187,8 @@
 						</div>
 						</c:if>
 					</div>
-					<div class="re-content" data-re_content="${item.offre_content }">
-						${item.offre_content }
+					<div class="re-content" data-re_content="${item.onre_content }">
+						${item.onre_content }
 					</div>
 				</div>
 			</div>
@@ -202,7 +202,7 @@
 	<div id="popup01">
 		<div class="close"><img class="popup-close" src="${pageContext.request.contextPath}/resources/images/close.png" onclick=""></div>
 		<h2>메뉴</h2>
-    	<div class="popup-text"><a href="offclassReviewUpdate.do?off_num=${off_num }"><img src="${pageContext.request.contextPath}/resources/images/pencil.png"> 수정하기</a></div>
+    	<div class="popup-text"><a href="onclassReviewUpdate.do?on_num=${on_num }"><img src="${pageContext.request.contextPath}/resources/images/pencil.png"> 수정하기</a></div>
     	<div class="popup-text" id="delete-reply"><img src="${pageContext.request.contextPath}/resources/images/trash.png">&nbsp;삭제하기</div>
 	</div>
 </div>
