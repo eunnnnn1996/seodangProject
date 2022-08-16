@@ -22,10 +22,16 @@
 * JQUERY
 ---
 
+## 맡은 부분
+메인페이지 주제별 카테고리
+온라인 클래스 등록, 수정, 삭제, 목록 조회, 상세보기
+수강신청 및 결제
+
 
 ## 웹사이트 PPT 자료
 
-[팀프로젝트 ppt.pptx](https://github.com/eunnnnn1996/seodangProject/files/9349489/ppt.pptx)
+[팀프로젝트 최종.pdf](https://github.com/eunnnnn1996/seodangProject/files/9351112/default.pdf)
 
+[팀프로젝트 최종.pptx](https://github.com/eunnnnn1996/seodangProject/files/9351113/default.pptx)
 
 ## 느낀점
